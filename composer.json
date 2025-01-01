@@ -1,0 +1,23 @@
+{
+    "name": "covaleski/collection",
+    "description": "Library for complex array and object operations.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "autoload": {
+        "psr-4": {
+            "Covaleski\\Collection\\": "src/",
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "covaleski",
+            "email": "covaleski23@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "^11.3",
+        "laravel/pint": "^1.17"
+    }
+}
