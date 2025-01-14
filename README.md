@@ -7,8 +7,11 @@ Complex array and object manipulation.
 - [X] `column($key)`
 - [ ] `contains($value)`
 - [ ] `every($callback)`
-- [ ] `filter($callback)`
-- [ ] `keys()`
+- [X] `filter($callback)`
+- [ ] `first()`
+- [ ] `get()`
+- [X] `keys()`
+- [ ] `last()`
 - [X] `map($callback)`
 - [X] `merge(...$collections)`
 - [ ] `pop()`
@@ -19,5 +22,5 @@ Complex array and object manipulation.
 - [ ] `some($callback)`
 - [ ] `sort($callback)`
 - [ ] `unshift($value)`
-- [ ] `values()`
+- [X] `values()`
 - [X] `walk($callback)`

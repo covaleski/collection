@@ -207,6 +207,26 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can get the collection values.
+     */
+    public function testGetsValues(): void
+    {
+        $this->assertEquals(
+            ['A320', 'Airbus', 2, 1988],
+            $this->assoc->values()->toArray(),
+        );
+        $this->assertEquals(
+            [
+                'Aeroporto Internacional Salgado Filho',
+                'POA',
+                'SBPA',
+                'Porto Alegre',
+            ],
+            $this->object->values()->toArray(),
+        );
+    }
+
+    /**
      * Test if can run callbacks for each element.
      */
     public function testIteratesValues(): void

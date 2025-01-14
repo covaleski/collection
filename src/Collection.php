@@ -104,6 +104,16 @@ class Collection
     }
 
     /**
+     * Create a collection containing this collection's values.
+     */
+    public function values(): static
+    {
+        $values = [];
+        foreach ($this->values as $value) $values[] = $value;
+        return new Collection($values);
+    }
+
+    /**
      * Run the specified callback over each element.
      */
     public function walk(callable $callback): static
