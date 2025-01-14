@@ -39,6 +39,16 @@ class Collection
     }
 
     /**
+     * Create a collection containing this collection's keys.
+     */
+    public function keys(): static
+    {
+        $keys = [];
+        foreach ($this->values as $key => $unused) $keys[] = $key;
+        return new Collection($keys);
+    }
+
+    /**
      * Create a collection with the results of the specified callback.
      */
     public function map(callable $callback): static

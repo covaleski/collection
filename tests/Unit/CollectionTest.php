@@ -188,6 +188,25 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can get the collection keys.
+     */
+    public function testGetsKeys(): void
+    {
+        $this->assertEquals(
+            ['model', 'manufacturer', 'crew', 'introduction'],
+            $this->assoc->keys()->toArray(),
+        );
+        $this->assertEquals(
+            [0, 1, 2, 3, 4],
+            $this->list->keys()->toArray(),
+        );
+        $this->assertEquals(
+            ['name', 'iata', 'icao', 'city'],
+            $this->object->keys()->toArray(),
+        );
+    }
+
+    /**
      * Test if can run callbacks for each element.
      */
     public function testIteratesValues(): void
