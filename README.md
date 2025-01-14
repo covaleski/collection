@@ -4,7 +4,7 @@ Complex array and object manipulation.
 
 ## Features
 
-- [ ] `column($key)`
+- [X] `column($key)`
 - [ ] `concat($collection)`
 - [ ] `contains($value)`
 - [ ] `every($callback)`

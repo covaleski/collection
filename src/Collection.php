@@ -12,7 +12,18 @@ class Collection
     }
 
     /**
-     * Create a collection containing values that pass the specified callback.
+     * Create a collection with all the values from the specified column.
+     */
+    public function column(string $key): static
+    {
+        return $this->map(fn (mixed $item): mixed => match (true) {
+            is_array($item) => $item[$key],
+            is_object($item) => $item->$key,
+        });
+    }
+
+    /**
+     * Create a collection with values that pass the specified callback.
      */
     public function filter(callable $callback): static
     {
@@ -28,7 +39,7 @@ class Collection
     }
 
     /**
-     * Run the specified callback over each element and return the results.
+     * Create a collection with the results of the specified callback.
      */
     public function map(callable $callback): static
     {
@@ -40,7 +51,7 @@ class Collection
     }
 
     /**
-     * Get the current values as an array.
+     * Get stored values as an array.
      */
     public function toArray(): array
     {

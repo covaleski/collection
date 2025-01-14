@@ -52,6 +52,17 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can capture a column of values into a new collection.
+     */
+    public function testGetsColumns(): void
+    {
+        $this->assertEquals(
+            ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
+            $this->list->column('call_sign')->toArray(),
+        );
+    }
+
+    /**
      * Test if can run callbacks for each element.
      */
     public function testIteratesValues(): void
