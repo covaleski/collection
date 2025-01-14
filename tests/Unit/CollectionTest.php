@@ -12,6 +12,11 @@ use PHPUnit\Framework\TestCase;
 final class CollectionTest extends TestCase
 {
     /**
+     * Collection instance containing an associative array.
+     */
+    public Collection $assoc;
+
+    /**
      * Collection instance containing a list array.
      */
     public Collection $list;
@@ -20,6 +25,126 @@ final class CollectionTest extends TestCase
      * Collection instance containing an object.
      */
     public Collection $object;
+
+    /**
+     * Test if can concatenate associative array collections.
+     */
+    public function testConcatenatesAssociativeArrays(): void
+    {
+        $a = new Collection([
+            'model' => 'A-320',
+            'role' => 'Narrow-body airliner',
+        ]);
+        $b = new Collection((object) [
+            'manufacturer' => 'Airbus Group',
+            'status' => 'In service',
+        ]);
+        $this->assertEquals(
+            [
+                'model' => 'A-320',
+                'manufacturer' => 'Airbus Group',
+                'crew' => 2,
+                'introduction' => 1988,
+                'role' => 'Narrow-body airliner',
+                'status' => 'In service',
+            ],
+            $this->assoc->merge($a, $b)->toArray(),
+        );
+    }
+
+    /**
+     * Test if can concatenate list collections.
+     */
+    public function testConcatenatesLists(): void
+    {
+        $collection = new Collection([
+            (object) [
+                'id' => 6,
+                'call_sign' => 'GLO1885',
+                'origin' => 'GRU',
+                'destination' => 'POA',
+            ],
+            (object) [
+                'id' => 7,
+                'call_sign' => 'TAM3602',
+                'origin' => 'GIG',
+                'destination' => 'POA',
+            ],
+        ]);
+        $this->assertEquals(
+            [
+                (object) [
+                    'id' => 1,
+                    'call_sign' => 'FBZ5902',
+                    'origin' => 'AEP',
+                    'destination' => 'GIG',
+                ],
+                (object) [
+                    'id' => 2,
+                    'call_sign' => 'TAM3476',
+                    'origin' => 'CWB',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'id' => 3,
+                    'call_sign' => 'AZU8725',
+                    'origin' => 'MVD',
+                    'destination' => 'CWB',
+                ],
+                (object) [
+                    'id' => 4,
+                    'call_sign' => 'ARG1152',
+                    'origin' => 'GRU',
+                    'destination' => 'AEP',
+                ],
+                (object) [
+                    'id' => 5,
+                    'call_sign' => 'TAM3322',
+                    'origin' => 'GRU',
+                    'destination' => 'CXJ',
+                ],
+                (object) [
+                    'id' => 6,
+                    'call_sign' => 'GLO1885',
+                    'origin' => 'GRU',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'id' => 7,
+                    'call_sign' => 'TAM3602',
+                    'origin' => 'GIG',
+                    'destination' => 'POA',
+                ],
+            ],
+            $this->list->merge($collection)->toArray(),
+        );
+    }
+
+    /**
+     * Test if can concatenate object collections.
+     */
+    public function testConcatenatesObjects(): void
+    {
+        $a = new Collection((object) [
+            'name' => 'Aeroporto Internacional de Porto Alegre',
+            'country' => 'Brazil',
+        ]);
+        $b = new Collection([
+            'city' => 'Município de Porto Alegre',
+            'state' => 'Rio Grande do Sul',
+        ]);
+        $this->assertEquals(
+            [
+                'name' => 'Aeroporto Internacional de Porto Alegre',
+                'iata' => 'POA',
+                'icao' => 'SBPA',
+                'city' => 'Município de Porto Alegre',
+                'country' => 'Brazil',
+                'state' => 'Rio Grande do Sul',
+            ],
+            $this->object->merge($a, $b)->toArray(),
+        );
+    }
 
     /**
      * Test if can filter values into a new collection.
@@ -130,6 +255,12 @@ final class CollectionTest extends TestCase
      */
     protected function setUp(): void
     {
+        $this->assoc = new Collection([
+            'model' => 'A320',
+            'manufacturer' => 'Airbus',
+            'crew' => 2,
+            'introduction' => 1988,
+        ]);
         $this->object = new Collection((object) [
             'name' => 'Aeroporto Internacional Salgado Filho',
             'iata' => 'POA',

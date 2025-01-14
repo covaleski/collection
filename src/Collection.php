@@ -51,6 +51,28 @@ class Collection
     }
 
     /**
+     * Create a collection merging contents from other collections.
+     */
+    public function merge(Collection ...$collections): static
+    {
+        $result = $this->values;
+        foreach ($collections as $collection) {
+            $collection->walk(function ($value, $key) use (&$result) {
+                if (is_array($result)) {
+                    if (is_int($key)) {
+                        $result[] = $value;
+                    } else {
+                        $result[$key] = $value;
+                    }
+                } else {
+                    $result->$key = $value;
+                }
+            });
+        }
+        return new static($result);
+    }
+
+    /**
      * Get stored values as an array.
      */
     public function toArray(): array
