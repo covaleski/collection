@@ -5,12 +5,12 @@ Complex array and object manipulation.
 ## Features
 
 - [X] `column($key)`
-- [ ] `concat($collection)`
 - [ ] `contains($value)`
 - [ ] `every($callback)`
 - [ ] `filter($callback)`
 - [ ] `keys()`
 - [X] `map($callback)`
+- [X] `merge(...$collections)`
 - [ ] `pop()`
 - [ ] `push($value)`
 - [ ] `reduce($callback)`
