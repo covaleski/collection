@@ -30,13 +30,13 @@ class Collection
     /**
      * Run the specified callback over each element and return the results.
      */
-    public function map(callable $callback): array
+    public function map(callable $callback): static
     {
         $result = [];
         foreach ($this->values as $key => $value) {
             $result[] = call_user_func($callback, $value, $key);
         }
-        return $result;
+        return new static($result);
     }
 
     /**

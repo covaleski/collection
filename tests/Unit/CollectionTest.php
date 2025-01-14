@@ -22,7 +22,7 @@ final class CollectionTest extends TestCase
     public Collection $object;
 
     /**
-     * Test if can create new collections with filtered values.
+     * Test if can filter values into a new collection.
      */
     public function testFiltersValues(): void
     {
@@ -77,7 +77,7 @@ final class CollectionTest extends TestCase
     }
 
     /**
-     * Test if can run callbacks and return results for each element.
+     * Test if can capture the results of a callback into a new collection.
      */
     public function testMapsValues(): void
     {
@@ -88,11 +88,13 @@ final class CollectionTest extends TestCase
                 'icao=SBPA',
                 'city=Porto Alegre',
             ],
-            $this->object->map(function ($value, $key) {
-                $this->assertIsString($key);
-                $this->assertIsString($value);
-                return "{$key}={$value}";
-            }),
+            $this->object
+                ->map(function ($value, $key) {
+                    $this->assertIsString($key);
+                    $this->assertIsString($value);
+                    return "{$key}={$value}";
+                })
+                ->toArray(),
         );
         $this->assertEquals(
             [
@@ -102,11 +104,13 @@ final class CollectionTest extends TestCase
                 '#3: GRU -> AEP',
                 '#4: GRU -> CXJ',
             ],
-            $this->list->map(function ($value, $key) {
-                $this->assertIsInt($key);
-                $this->assertIsObject($value);
-                return "#{$key}: {$value->origin} -> {$value->destination}";
-            }),
+            $this->list
+                ->map(function ($value, $key) {
+                    $this->assertIsInt($key);
+                    $this->assertIsObject($value);
+                    return "#{$key}: {$value->origin} -> {$value->destination}";
+                })
+                ->toArray(),
         );
     }
 
