@@ -43,9 +43,7 @@ class Collection
      */
     public function keys(): static
     {
-        $keys = [];
-        foreach ($this->values as $key => $unused) $keys[] = $key;
-        return new Collection($keys);
+        return $this->map(fn ($_, $k) => $k);
     }
 
     /**
@@ -108,9 +106,7 @@ class Collection
      */
     public function values(): static
     {
-        $values = [];
-        foreach ($this->values as $value) $values[] = $value;
-        return new Collection($values);
+        return $this->map(fn ($v) => $v);
     }
 
     /**
