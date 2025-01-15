@@ -27,6 +27,29 @@ final class CollectionTest extends TestCase
     public Collection $object;
 
     /**
+     * Test if can access specific values.
+     */
+    public function testAccessesValues(): void
+    {
+        $this->assertSame('A320', $this->assoc->get());
+        $this->assertSame('A320', $this->assoc->get('model'));
+        $this->assertSame('Airbus', $this->assoc->get('manufacturer'));
+        $this->assertSame(2, $this->assoc->get('crew'));
+        $this->assertSame(1988, $this->assoc->get('introduction'));
+        $this->assertSame(
+            'Aeroporto Internacional Salgado Filho',
+            $this->object->get(),
+        );
+        $this->assertSame(
+            'Aeroporto Internacional Salgado Filho',
+            $this->object->get('name'),
+        );
+        $this->assertSame('POA', $this->object->get('iata'));
+        $this->assertSame('SBPA', $this->object->get('icao'));
+        $this->assertSame('Porto Alegre', $this->object->get('city'));
+    }
+
+    /**
      * Test if can concatenate associative array collections.
      */
     public function testConcatenatesAssociativeArrays(): void

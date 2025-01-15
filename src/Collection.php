@@ -39,6 +39,21 @@ class Collection
     }
 
     /**
+     * Access a value directly.
+     */
+    public function get(null|string $key = null): mixed
+    {
+        if ($key !== null) {
+            return is_array($this->values)
+                ? $this->values[$key]
+                : $this->values->$key;
+        } else {
+            foreach ($this->values as $value) break;
+            return $value ?? null;
+        }
+    }
+
+    /**
      * Create a collection containing this collection's keys.
      */
     public function keys(): static
