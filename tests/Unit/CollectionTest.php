@@ -367,6 +367,9 @@ final class CollectionTest extends TestCase
             ],
             $this->list->slice(-3)->toArray(),
         );
+        $this->assertEquals([], $this->list->slice(8, -2)->toArray());
+        $this->assertEquals([], $this->list->slice(0, -8)->toArray());
+        $this->assertEquals([], $this->list->slice(-8, -8)->toArray());
     }
 
     /**

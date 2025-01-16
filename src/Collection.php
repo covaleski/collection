@@ -117,16 +117,17 @@ class Collection implements Countable
     {
         $result = new static($this->clone());
         $keys = $this->keys()->toArray();
-        $start = $offset < 0 ? $this->count() + $offset : $offset;
+        $count = $this->count();
+        $start = $offset < 0 ? $count + $offset : $offset;
         $end = match (true) {
-            $length === null => $this->count() - 1,
-            $length < 0 => $this->count() + $length - 1,
+            $length === null => $count - 1,
+            $length < 0 => $count + $length - 1,
             default => $start + $length - 1,
         };
-        for ($i = 0; $i < $start; $i++) {
+        for ($i = 0; $i < min($start, $count); $i++) {
             $result->unset($keys[$i]);
         }
-        for ($i = $end + 1; $i < $this->count(); $i++) {
+        for ($i = max(0, $end + 1); $i < $count; $i++) {
             $result->unset($keys[$i]);
         }
         return $result;
