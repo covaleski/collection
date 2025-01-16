@@ -20,7 +20,7 @@ Complex array and object manipulation.
 - [ ] `reduce($callback)`
 - [ ] `reverse()`
 - [ ] `shift()`
-- [ ] `slice($offset, $length)`
+- [X] `slice($offset, $length)`
 - [ ] `some($callback)`
 - [ ] `sort($callback)`
 - [ ] `unshift($value)`

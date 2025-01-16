@@ -110,14 +110,27 @@ class Collection implements Countable
         return new static($result);
     }
 
-    // /**
-    //  * Create a collection from a section of the current values.
-    //  */
-    // public function slice(int $offset = 0, null|int $length = null): static
-    // {
-    //     $result = $this->clone();
-    //     return new static($result);
-    // }
+    /**
+     * Create a collection from a section of the current values.
+     */
+    public function slice(int $offset = 0, null|int $length = null): static
+    {
+        $result = new static($this->clone());
+        $keys = $this->keys()->toArray();
+        $start = $offset < 0 ? $this->count() + $offset : $offset;
+        $end = match (true) {
+            $length === null => $this->count() - 1,
+            $length < 0 => $this->count() + $length - 1,
+            default => $start + $length - 1,
+        };
+        for ($i = 0; $i < $start; $i++) {
+            $result->unset($keys[$i]);
+        }
+        for ($i = $end + 1; $i < $this->count(); $i++) {
+            $result->unset($keys[$i]);
+        }
+        return $result;
+    }
 
     /**
      * Get stored values as an array.

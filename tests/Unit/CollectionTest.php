@@ -325,19 +325,49 @@ final class CollectionTest extends TestCase
         );
     }
 
-    // /**
-    //  * Test if can slice collection values.
-    //  */
-    // public function testSlicesValues(): void
-    // {
-    //     $this->assertSame(
-    //         [
-    //             'manufacturer' => 'Airbus',
-    //             'crew' => 2,
-    //         ],
-    //         $this->assoc->slice(1, 2)->toArray(),
-    //     );
-    // }
+    /**
+     * Test if can slice collection values.
+     */
+    public function testSlicesValues(): void
+    {
+        $this->assertSame(
+            [
+                'manufacturer' => 'Airbus',
+                'crew' => 2,
+            ],
+            $this->assoc->slice(1, 2)->toArray(),
+        );
+        $this->assertSame(
+            [
+                'manufacturer' => 'Airbus',
+                'crew' => 2,
+            ],
+            $this->assoc->slice(-3, -1)->toArray(),
+        );
+        $this->assertEquals(
+            [
+                2 => (object) [
+                    'id' => 3,
+                    'call_sign' => 'AZU8725',
+                    'origin' => 'MVD',
+                    'destination' => 'CWB',
+                ],
+                3 => (object) [
+                    'id' => 4,
+                    'call_sign' => 'ARG1152',
+                    'origin' => 'GRU',
+                    'destination' => 'AEP',
+                ],
+                4 => (object) [
+                    'id' => 5,
+                    'call_sign' => 'TAM3322',
+                    'origin' => 'GRU',
+                    'destination' => 'CXJ',
+                ],
+            ],
+            $this->list->slice(-3)->toArray(),
+        );
+    }
 
     /**
      * This method is called before each test.
