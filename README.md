@@ -6,10 +6,11 @@ Complex array and object manipulation.
 
 - [X] `column($key)`
 - [ ] `contains($value)`
+- [X] `count()`
 - [ ] `every($callback)`
 - [X] `filter($callback)`
 - [ ] `first()`
-- [ ] `get()`
+- [X] `get()`
 - [X] `keys()`
 - [ ] `last()`
 - [X] `map($callback)`
@@ -19,6 +20,7 @@ Complex array and object manipulation.
 - [ ] `reduce($callback)`
 - [ ] `reverse()`
 - [ ] `shift()`
+- [ ] `slice($offset, $length)`
 - [ ] `some($callback)`
 - [ ] `sort($callback)`
 - [ ] `unshift($value)`

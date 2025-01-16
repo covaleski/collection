@@ -2,7 +2,10 @@
 
 namespace Covaleski\Collection;
 
-class Collection
+use Countable;
+use stdClass;
+
+class Collection implements Countable
 {
     /**
      * Create the collection instance.
@@ -23,13 +26,25 @@ class Collection
     }
 
     /**
+     * Get the current length.
+     */
+    public function count(): int
+    {
+        if (is_countable($this->values)) {
+            return count($this->values);
+        } else {
+            $count = 0;
+            foreach ($this->values as $value) $count++;
+            return $count;
+        }
+    }
+
+    /**
      * Create a collection with values that pass the specified callback.
      */
     public function filter(callable $callback): static
     {
-        $result = new static(
-            is_array($this->values) ? $this->values : clone $this->values,
-        );
+        $result = new static($this->clone());
         $this->walk(function ($value, $key) use ($callback, $result) {
             if (!call_user_func($callback, $value, $key)) {
                 $result->unset($key);
@@ -39,17 +54,17 @@ class Collection
     }
 
     /**
-     * Access a value directly.
+     * Access the first stored value or the one at the specified key.
      */
     public function get(null|string $key = null): mixed
     {
-        if ($key !== null) {
-            return is_array($this->values)
-                ? $this->values[$key]
-                : $this->values->$key;
+        if ($key === null) {
+            $data = (array) $this->values;
+            return reset($data);
+        } elseif (is_array($this->values)) {
+            return $this->values[$key];
         } else {
-            foreach ($this->values as $value) break;
-            return $value ?? null;
+            return $this->values->$key;
         }
     }
 
@@ -78,7 +93,7 @@ class Collection
      */
     public function merge(Collection ...$collections): static
     {
-        $result = $this->values;
+        $result = $this->clone();
         foreach ($collections as $collection) {
             $collection->walk(function ($value, $key) use (&$result) {
                 if (is_array($result)) {
@@ -95,12 +110,29 @@ class Collection
         return new static($result);
     }
 
+    // /**
+    //  * Create a collection from a section of the current values.
+    //  */
+    // public function slice(int $offset = 0, null|int $length = null): static
+    // {
+    //     $result = $this->clone();
+    //     return new static($result);
+    // }
+
     /**
      * Get stored values as an array.
      */
     public function toArray(): array
     {
         return (array) $this->values;
+    }
+
+    /**
+     * Get stored values as an object.
+     */
+    public function toObject(): object
+    {
+        return (object) $this->values;
     }
 
     /**
@@ -133,5 +165,21 @@ class Collection
             call_user_func($callback, $value, $key);
         }
         return $this;
+    }
+
+    /**
+     * Copy current data.
+     */
+    protected function clone(): array|object
+    {
+        return is_array($this->values) ? $this->values : clone $this->values;
+    }
+
+    /**
+     * Create an empty set of data.
+     */
+    protected function create(): array|object
+    {
+        return is_array($this->values) ? [] : new stdClass;
     }
 }

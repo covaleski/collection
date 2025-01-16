@@ -250,6 +250,19 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if the collection is countable.
+     */
+    public function testIsCountable(): void
+    {
+        $this->assertSame(4, $this->assoc->count());
+        $this->assertSame(4, count($this->assoc));
+        $this->assertSame(4, $this->object->count());
+        $this->assertSame(4, count($this->object));
+        $this->assertSame(5, $this->list->count());
+        $this->assertSame(5, count($this->list));
+    }
+
+    /**
      * Test if can run callbacks for each element.
      */
     public function testIteratesValues(): void
@@ -311,6 +324,20 @@ final class CollectionTest extends TestCase
                 ->toArray(),
         );
     }
+
+    // /**
+    //  * Test if can slice collection values.
+    //  */
+    // public function testSlicesValues(): void
+    // {
+    //     $this->assertSame(
+    //         [
+    //             'manufacturer' => 'Airbus',
+    //             'crew' => 2,
+    //         ],
+    //         $this->assoc->slice(1, 2)->toArray(),
+    //     );
+    // }
 
     /**
      * This method is called before each test.
