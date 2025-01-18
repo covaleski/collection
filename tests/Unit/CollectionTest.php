@@ -31,6 +31,12 @@ final class CollectionTest extends TestCase
      */
     public function testAccessesValues(): void
     {
+        // $this->assoc = new Collection([
+        //     'model' => 'A320',
+        //     'manufacturer' => 'Airbus',
+        //     'crew' => 2,
+        //     'introduction' => 1988,
+        // ]);
         $this->assertSame('A320', $this->assoc->get('model'));
         $this->assertSame('Airbus', $this->assoc->get('manufacturer'));
         $this->assertSame(2, $this->assoc->get('crew'));
@@ -42,6 +48,16 @@ final class CollectionTest extends TestCase
         $this->assertSame('POA', $this->object->get('iata'));
         $this->assertSame('SBPA', $this->object->get('icao'));
         $this->assertSame('Porto Alegre', $this->object->get('city'));
+        $this->assertSame('A320', $this->assoc->nth(0));
+        $this->assertSame('Airbus', $this->assoc->nth(1));
+        $this->assertSame(2, $this->assoc->nth(2));
+        $this->assertSame(1988, $this->assoc->nth(3));
+        $this->assertSame('A320', $this->assoc->nth(-4));
+        $this->assertSame('Airbus', $this->assoc->nth(-3));
+        $this->assertSame(2, $this->assoc->nth(-2));
+        $this->assertSame(1988, $this->assoc->nth(-1));
+        $this->assertSame('A320', $this->assoc->first());
+        $this->assertSame(1988, $this->assoc->last());
     }
 
     /**

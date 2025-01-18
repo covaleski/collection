@@ -54,6 +54,14 @@ class Collection implements Countable
     }
 
     /**
+     * Get the first stored value.
+     */
+    public function first(): mixed
+    {
+        return $this->nth(0);
+    }
+
+    /**
      * Access the first stored value or the one at the specified key.
      */
     public function get(string $key): mixed
@@ -69,6 +77,14 @@ class Collection implements Countable
     public function keys(): static
     {
         return $this->map(fn ($_, $k) => $k);
+    }
+
+    /**
+     * Get the last stored value.
+     */
+    public function last(): mixed
+    {
+        return $this->nth(-1);
     }
 
     /**
@@ -103,6 +119,16 @@ class Collection implements Countable
             });
         }
         return new static($result);
+    }
+
+    /**
+     * Get the `$index`th element.
+     */
+    public function nth(int $position): mixed
+    {
+        $index = $position < 0 ? $this->count() + $position : $position;
+        $key = $this->keys()->get($index);
+        return $this->get($key);
     }
 
     /**

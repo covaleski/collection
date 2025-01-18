@@ -12,13 +12,13 @@ Complex array and object manipulation.
 - [ ] `drop($column)`
 - [ ] `every($callback)`
 - [X] `filter($callback)`
-- [ ] `first()`
+- [X] `first()`
 - [X] `get()`
 - [X] `keys()`
-- [ ] `last()`
+- [X] `last()`
 - [X] `map($callback)`
 - [X] `merge(...$collections)`
-- [ ] `nth($index)`
+- [X] `nth($index)`
 - [ ] `pop()`
 - [ ] `push($value)`
 - [ ] `reduce($callback)`
