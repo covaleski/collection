@@ -4,9 +4,12 @@ Complex array and object manipulation.
 
 ## Features
 
+- [ ] `all()`
+- [ ] `assign($column, $value)`
 - [X] `column($key)`
 - [ ] `contains($value)`
 - [X] `count()`
+- [ ] `drop($column)`
 - [ ] `every($callback)`
 - [X] `filter($callback)`
 - [ ] `first()`
@@ -15,6 +18,7 @@ Complex array and object manipulation.
 - [ ] `last()`
 - [X] `map($callback)`
 - [X] `merge(...$collections)`
+- [ ] `nth($index)`
 - [ ] `pop()`
 - [ ] `push($value)`
 - [ ] `reduce($callback)`

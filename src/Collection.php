@@ -56,16 +56,11 @@ class Collection implements Countable
     /**
      * Access the first stored value or the one at the specified key.
      */
-    public function get(null|string $key = null): mixed
+    public function get(string $key): mixed
     {
-        if ($key === null) {
-            $data = (array) $this->values;
-            return reset($data);
-        } elseif (is_array($this->values)) {
-            return $this->values[$key];
-        } else {
-            return $this->values->$key;
-        }
+        return is_array($this->values)
+            ? $this->values[$key]
+            : $this->values->$key;
     }
 
     /**
