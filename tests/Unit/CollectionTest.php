@@ -486,6 +486,59 @@ final class CollectionTest extends TestCase
         );
     }
 
+    public function testSetsAndUnsetsColumns(): void
+    {
+        $this->assertEquals(
+            [
+                (object) [
+                    'call_sign' => 'FBZ5902',
+                    'origin' => 'AEP',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'call_sign' => 'TAM3476',
+                    'origin' => 'CWB',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'call_sign' => 'AZU8725',
+                    'origin' => 'MVD',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'call_sign' => 'ARG1152',
+                    'origin' => 'GRU',
+                    'destination' => 'POA',
+                ],
+                (object) [
+                    'call_sign' => 'TAM3322',
+                    'origin' => 'GRU',
+                    'destination' => 'POA',
+                ],
+            ],
+            $this->list
+                ->assign('destination', 'POA')
+                ->drop('id')
+                ->all(),
+        );
+        $array_list = new Collection([
+            ['name' => 'John', 'city' => 'Itu'],
+            ['name' => 'Mary', 'city' => 'Canoas'],
+            ['name' => 'Jane', 'city' => 'Macapá'],
+        ]);
+        $this->assertEquals(
+            [
+                ['name' => 'John', 'country' => 'BRA'],
+                ['name' => 'Mary', 'country' => 'BRA'],
+                ['name' => 'Jane', 'country' => 'BRA'],
+            ],
+            $array_list
+                ->assign('country', 'BRA')
+                ->drop('city')
+                ->all(),
+        );
+    }
+
     /**
      * Test if can create collections with a slice of the previous one.
      */

@@ -5,12 +5,12 @@ Type agnostic wrapper to manipulate objects and arrays.
 ## Features
 
 - [X] `all()`
-- [ ] `assign($column, $value)`
+- [X] `assign($column, $value)`
 - [X] `column($key)`
 - [ ] `contains($value)`
 - [X] `copy()`
 - [X] `count()`
-- [ ] `drop($column)`
+- [X] `drop($column)`
 - [ ] `every($callback)`
 - [X] `filter($callback)`
 - [X] `first()`

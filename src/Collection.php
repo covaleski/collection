@@ -23,6 +23,21 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Assign the specified value to the specified key in all stored values.
+     */
+    public function assign(int|string $key, mixed $value): static
+    {
+        $this->walk(function (mixed &$item) use ($key, $value) {
+            if (is_array($item)) {
+                $item[$key] = $value;
+            } elseif (is_object($item)) {
+                $item->$key = $value;
+            }
+        });
+        return $this;
+    }
+
+    /**
      * Create a collection with values from each element at the specified key.
      */
     public function column(string $key): static
@@ -53,6 +68,21 @@ class Collection implements ArrayAccess, Countable
             foreach ($this->values as $unused) $count++;
             return $count;
         }
+    }
+
+    /**
+     * Remove the specified key from all stored values.
+     */
+    public function drop(int|string $key): static
+    {
+        $this->walk(function (mixed &$item) use ($key) {
+            if (is_array($item)) {
+                unset($item[$key]);
+            } elseif (is_object($item)) {
+                unset($item->$key);
+            }
+        });
+        return $this;
     }
 
     /**
@@ -267,8 +297,8 @@ class Collection implements ArrayAccess, Countable
      */
     public function walk(callable $callback): static
     {
-        foreach ($this->values as $key => $value) {
-            call_user_func($callback, $value, $key);
+        foreach ($this->values as $key => &$value) {
+            $callback($value, $key);
         }
         return $this;
     }
