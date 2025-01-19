@@ -12,35 +12,36 @@ use PHPUnit\Framework\TestCase;
 final class CollectionTest extends TestCase
 {
     /**
-     * Collection instance containing an associative array.
+     * Associative array collection.
      */
-    public Collection $assoc;
+    protected Collection $associative;
 
     /**
-     * Collection instance containing a list array.
+     * List array collection.
      */
-    public Collection $list;
+    protected Collection $list;
 
     /**
-     * Collection instance containing an object.
+     * Object collection.
      */
-    public Collection $object;
+    protected Collection $object;
 
     /**
-     * Test if can access specific values.
+     * Collection data sources.
+     * 
+     * @var array<string, array|object>
      */
-    public function testAccessesValues(): void
+    protected array $sources;
+
+    /**
+     * Test if can access values using keys.
+     */
+    public function testAccessesValuesByKeys(): void
     {
-        // $this->assoc = new Collection([
-        //     'model' => 'A320',
-        //     'manufacturer' => 'Airbus',
-        //     'crew' => 2,
-        //     'introduction' => 1988,
-        // ]);
-        $this->assertSame('A320', $this->assoc->get('model'));
-        $this->assertSame('Airbus', $this->assoc->get('manufacturer'));
-        $this->assertSame(2, $this->assoc->get('crew'));
-        $this->assertSame(1988, $this->assoc->get('introduction'));
+        $this->assertSame('A320', $this->associative->get('model'));
+        $this->assertSame('Airbus', $this->associative->get('manufacturer'));
+        $this->assertSame(2, $this->associative->get('crew'));
+        $this->assertSame(1988, $this->associative->get('introduction'));
         $this->assertSame(
             'Aeroporto Internacional Salgado Filho',
             $this->object->get('name'),
@@ -48,22 +49,189 @@ final class CollectionTest extends TestCase
         $this->assertSame('POA', $this->object->get('iata'));
         $this->assertSame('SBPA', $this->object->get('icao'));
         $this->assertSame('Porto Alegre', $this->object->get('city'));
-        $this->assertSame('A320', $this->assoc->nth(0));
-        $this->assertSame('Airbus', $this->assoc->nth(1));
-        $this->assertSame(2, $this->assoc->nth(2));
-        $this->assertSame(1988, $this->assoc->nth(3));
-        $this->assertSame('A320', $this->assoc->nth(-4));
-        $this->assertSame('Airbus', $this->assoc->nth(-3));
-        $this->assertSame(2, $this->assoc->nth(-2));
-        $this->assertSame(1988, $this->assoc->nth(-1));
-        $this->assertSame('A320', $this->assoc->first());
-        $this->assertSame(1988, $this->assoc->last());
+    }
+
+    /**
+     * Test if can access values using positions.
+     */
+    public function testAccessesValuesByPosition(): void
+    {
+        $this->assertSame('A320', $this->associative->nth(0));
+        $this->assertSame('Airbus', $this->associative->nth(1));
+        $this->assertSame(2, $this->associative->nth(2));
+        $this->assertSame(1988, $this->associative->nth(3));
+        $this->assertSame('A320', $this->associative->nth(-4));
+        $this->assertSame('Airbus', $this->associative->nth(-3));
+        $this->assertSame(2, $this->associative->nth(-2));
+        $this->assertSame(1988, $this->associative->nth(-1));
+        $this->assertSame('A320', $this->associative->first());
+        $this->assertSame(1988, $this->associative->last());
+    }
+
+    /**
+     * Test if can create collections by filtering the previous one.
+     */
+    public function testFiltersValues(): void
+    {
+        $this->assertEquals(
+            [
+                3 => (object) [
+                    'id' => 4,
+                    'call_sign' => 'ARG1152',
+                    'origin' => 'GRU',
+                    'destination' => 'AEP',
+                ],
+                4 => (object) [
+                    'id' => 5,
+                    'call_sign' => 'TAM3322',
+                    'origin' => 'GRU',
+                    'destination' => 'CXJ',
+                ],
+            ],
+            $this->list
+                ->filter(function ($value, $key) {
+                    $this->assertIsInt($key);
+                    $this->assertIsObject($value);
+                    return $value->origin === 'GRU';
+                })
+                ->toArray(),
+        );
+    }
+
+    /**
+     * Test if can capture all values in the specified list "column".
+     */
+    public function testGetsColumns(): void
+    {
+        $this->assertEquals(
+            ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
+            $this->list->column('call_sign')->toArray(),
+        );
+    }
+
+    /**
+     * Test if can create collections with the keys from the previous one.
+     */
+    public function testGetsKeys(): void
+    {
+        $this->assertEquals(
+            ['model', 'manufacturer', 'crew', 'introduction'],
+            $this->associative->keys()->toArray(),
+        );
+        $this->assertEquals(
+            [0, 1, 2, 3, 4],
+            $this->list->keys()->toArray(),
+        );
+        $this->assertEquals(
+            ['name', 'iata', 'icao', 'city'],
+            $this->object->keys()->toArray(),
+        );
+    }
+
+    /**
+     * Test if can create collections with the values from the previous one.
+     */
+    public function testGetsValues(): void
+    {
+        $this->assertEquals(
+            ['A320', 'Airbus', 2, 1988],
+            $this->associative->values()->toArray(),
+        );
+        $this->assertEquals(
+            [
+                'Aeroporto Internacional Salgado Filho',
+                'POA',
+                'SBPA',
+                'Porto Alegre',
+            ],
+            $this->object->values()->toArray(),
+        );
+        $this->assertEquals(
+            $this->sources['list'],
+            $this->list->values()->toArray(),
+        );
+    }
+
+    /**
+     * Test if can count stored values.
+     */
+    public function testIsCountable(): void
+    {
+        $this->assertSame(4, $this->associative->count());
+        $this->assertSame(4, count($this->associative));
+        $this->assertSame(4, $this->object->count());
+        $this->assertSame(4, count($this->object));
+        $this->assertSame(5, $this->list->count());
+        $this->assertSame(5, count($this->list));
+    }
+
+    /**
+     * Test if can run callbacks for each element.
+     */
+    public function testIteratesValues(): void
+    {
+        $count_a = 0;
+        $count_b = 0;
+        $this->assertSame($this->object, $this->object->walk(
+            function ($value, $key) use (&$count_a) {
+                $count_a++;
+                $this->assertIsString($key);
+                $this->assertIsString($value);
+            },
+        ));
+        $this->assertSame($this->list, $this->list->walk(
+            function ($value, $key) use (&$count_b) {
+                $count_b++;
+                $this->assertIsInt($key);
+                $this->assertIsObject($value);
+            },
+        ));
+        $this->assertSame(4, $count_a);
+        $this->assertSame(5, $count_b);
+    }
+
+    /**
+     * Test if can create collections iterating the previous one.
+     */
+    public function testMapsValues(): void
+    {
+        $this->assertEquals(
+            [
+                'name=Aeroporto Internacional Salgado Filho',
+                'iata=POA',
+                'icao=SBPA',
+                'city=Porto Alegre',
+            ],
+            $this->object
+                ->map(function ($value, $key) {
+                    $this->assertIsString($key);
+                    $this->assertIsString($value);
+                    return "{$key}={$value}";
+                })
+                ->toArray(),
+        );
+        $this->assertEquals(
+            [
+                '#0: AEP -> GIG',
+                '#1: CWB -> POA',
+                '#2: MVD -> CWB',
+                '#3: GRU -> AEP',
+                '#4: GRU -> CXJ',
+            ],
+            $this->list
+                ->map(function ($value, $key) {
+                    $this->assertIsInt($key);
+                    $this->assertIsObject($value);
+                    return "#{$key}: {$value->origin} -> {$value->destination}";
+                })
+                ->toArray(),
+        );
     }
 
     /**
      * Test if can concatenate associative array collections.
      */
-    public function testConcatenatesAssociativeArrays(): void
+    public function testMergesAssociativeArrays(): void
     {
         $a = new Collection([
             'model' => 'A-320',
@@ -82,14 +250,14 @@ final class CollectionTest extends TestCase
                 'role' => 'Narrow-body airliner',
                 'status' => 'In service',
             ],
-            $this->assoc->merge($a, $b)->toArray(),
+            $this->associative->merge($a, $b)->toArray(),
         );
     }
 
     /**
      * Test if can concatenate list collections.
      */
-    public function testConcatenatesLists(): void
+    public function testMergesLists(): void
     {
         $collection = new Collection([
             (object) [
@@ -157,7 +325,7 @@ final class CollectionTest extends TestCase
     /**
      * Test if can concatenate object collections.
      */
-    public function testConcatenatesObjects(): void
+    public function testMergesObjects(): void
     {
         $a = new Collection((object) [
             'name' => 'Aeroporto Internacional de Porto Alegre',
@@ -181,163 +349,7 @@ final class CollectionTest extends TestCase
     }
 
     /**
-     * Test if can filter values into a new collection.
-     */
-    public function testFiltersValues(): void
-    {
-        $this->assertEquals(
-            [
-                3 => (object) [
-                    'id' => 4,
-                    'call_sign' => 'ARG1152',
-                    'origin' => 'GRU',
-                    'destination' => 'AEP',
-                ],
-                4 => (object) [
-                    'id' => 5,
-                    'call_sign' => 'TAM3322',
-                    'origin' => 'GRU',
-                    'destination' => 'CXJ',
-                ],
-            ],
-            $this->list
-                ->filter(function ($value, $key) {
-                    $this->assertIsInt($key);
-                    $this->assertIsObject($value);
-                    return $value->origin === 'GRU';
-                })
-                ->toArray(),
-        );
-    }
-
-    /**
-     * Test if can capture a column of values into a new collection.
-     */
-    public function testGetsColumns(): void
-    {
-        $this->assertEquals(
-            ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
-            $this->list->column('call_sign')->toArray(),
-        );
-    }
-
-    /**
-     * Test if can get the collection keys.
-     */
-    public function testGetsKeys(): void
-    {
-        $this->assertEquals(
-            ['model', 'manufacturer', 'crew', 'introduction'],
-            $this->assoc->keys()->toArray(),
-        );
-        $this->assertEquals(
-            [0, 1, 2, 3, 4],
-            $this->list->keys()->toArray(),
-        );
-        $this->assertEquals(
-            ['name', 'iata', 'icao', 'city'],
-            $this->object->keys()->toArray(),
-        );
-    }
-
-    /**
-     * Test if can get the collection values.
-     */
-    public function testGetsValues(): void
-    {
-        $this->assertEquals(
-            ['A320', 'Airbus', 2, 1988],
-            $this->assoc->values()->toArray(),
-        );
-        $this->assertEquals(
-            [
-                'Aeroporto Internacional Salgado Filho',
-                'POA',
-                'SBPA',
-                'Porto Alegre',
-            ],
-            $this->object->values()->toArray(),
-        );
-    }
-
-    /**
-     * Test if the collection is countable.
-     */
-    public function testIsCountable(): void
-    {
-        $this->assertSame(4, $this->assoc->count());
-        $this->assertSame(4, count($this->assoc));
-        $this->assertSame(4, $this->object->count());
-        $this->assertSame(4, count($this->object));
-        $this->assertSame(5, $this->list->count());
-        $this->assertSame(5, count($this->list));
-    }
-
-    /**
-     * Test if can run callbacks for each element.
-     */
-    public function testIteratesValues(): void
-    {
-        $count_a = 0;
-        $count_b = 0;
-        $this->assertSame($this->object, $this->object->walk(
-            function ($value, $key) use (&$count_a) {
-                $count_a++;
-                $this->assertIsString($key);
-                $this->assertIsString($value);
-            },
-        ));
-        $this->assertSame($this->list, $this->list->walk(
-            function ($value, $key) use (&$count_b) {
-                $count_b++;
-                $this->assertIsInt($key);
-                $this->assertIsObject($value);
-            },
-        ));
-        $this->assertSame(4, $count_a);
-        $this->assertSame(5, $count_b);
-    }
-
-    /**
-     * Test if can capture the results of a callback into a new collection.
-     */
-    public function testMapsValues(): void
-    {
-        $this->assertEquals(
-            [
-                'name=Aeroporto Internacional Salgado Filho',
-                'iata=POA',
-                'icao=SBPA',
-                'city=Porto Alegre',
-            ],
-            $this->object
-                ->map(function ($value, $key) {
-                    $this->assertIsString($key);
-                    $this->assertIsString($value);
-                    return "{$key}={$value}";
-                })
-                ->toArray(),
-        );
-        $this->assertEquals(
-            [
-                '#0: AEP -> GIG',
-                '#1: CWB -> POA',
-                '#2: MVD -> CWB',
-                '#3: GRU -> AEP',
-                '#4: GRU -> CXJ',
-            ],
-            $this->list
-                ->map(function ($value, $key) {
-                    $this->assertIsInt($key);
-                    $this->assertIsObject($value);
-                    return "#{$key}: {$value->origin} -> {$value->destination}";
-                })
-                ->toArray(),
-        );
-    }
-
-    /**
-     * Test if can slice collection values.
+     * Test if can create collections with a slice of the previous one.
      */
     public function testSlicesValues(): void
     {
@@ -346,14 +358,14 @@ final class CollectionTest extends TestCase
                 'manufacturer' => 'Airbus',
                 'crew' => 2,
             ],
-            $this->assoc->slice(1, 2)->toArray(),
+            $this->associative->slice(1, 2)->toArray(),
         );
         $this->assertSame(
             [
                 'manufacturer' => 'Airbus',
                 'crew' => 2,
             ],
-            $this->assoc->slice(-3, -1)->toArray(),
+            $this->associative->slice(-3, -1)->toArray(),
         );
         $this->assertEquals(
             [
@@ -388,19 +400,13 @@ final class CollectionTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->assoc = new Collection([
+        $this->sources['associative'] = [
             'model' => 'A320',
             'manufacturer' => 'Airbus',
             'crew' => 2,
             'introduction' => 1988,
-        ]);
-        $this->object = new Collection((object) [
-            'name' => 'Aeroporto Internacional Salgado Filho',
-            'iata' => 'POA',
-            'icao' => 'SBPA',
-            'city' => 'Porto Alegre',
-        ]);
-        $this->list = new Collection([
+        ];
+        $this->sources['list'] = [
             (object) [
                 'id' => 1,
                 'call_sign' => 'FBZ5902',
@@ -431,6 +437,15 @@ final class CollectionTest extends TestCase
                 'origin' => 'GRU',
                 'destination' => 'CXJ',
             ],
-        ]);
+        ];
+        $this->sources['object'] = (object) [
+            'name' => 'Aeroporto Internacional Salgado Filho',
+            'iata' => 'POA',
+            'icao' => 'SBPA',
+            'city' => 'Porto Alegre',
+        ];
+        $this->associative = new Collection($this->sources['associative']);
+        $this->list = new Collection($this->sources['list']);
+        $this->object = new Collection($this->sources['object']);
     }
 }
