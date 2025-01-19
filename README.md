@@ -1,13 +1,14 @@
 # Collection
 
-Complex array and object manipulation.
+Type agnostic wrapper to manipulate objects and arrays.
 
 ## Features
 
-- [ ] `all()`
+- [X] `all()`
 - [ ] `assign($column, $value)`
 - [X] `column($key)`
 - [ ] `contains($value)`
+- [X] `copy()`
 - [X] `count()`
 - [ ] `drop($column)`
 - [ ] `every($callback)`

@@ -33,6 +33,14 @@ class Collection implements Countable
     }
 
     /**
+     * Create a collection with a copy of the stored values.
+     */
+    public function copy(): static
+    {
+        return new static($this->clone());
+    }
+
+    /**
      * Count stored values.
      */
     public function count(): int
@@ -51,7 +59,7 @@ class Collection implements Countable
      */
     public function filter(callable $callback): static
     {
-        $result = new static($this->clone());
+        $result = $this->copy();
         $this->walk(function ($value, $key) use ($callback, $result) {
             if (!call_user_func($callback, $value, $key)) {
                 $result->unset($key);
@@ -143,7 +151,7 @@ class Collection implements Countable
      */
     public function slice(int $offset = 0, null|int $length = null): static
     {
-        $result = new static($this->clone());
+        $result = $this->copy();
         $keys = $this->keys()->toArray();
         $count = $this->count();
         $start = $offset < 0 ? $count + $offset : $offset;

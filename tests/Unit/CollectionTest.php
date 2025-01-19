@@ -88,6 +88,40 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can create copies that DON'T reference the original values.
+     */
+    public function testCreatesCopies(): void
+    {
+        $copy = $this->associative->copy();
+        $this->assertEquals(
+            $this->associative->all(),
+            $copy->all(),
+        );
+        $this->assertSame(
+            $this->associative->all(),
+            $copy->all(),
+        );
+        $copy = $this->list->copy();
+        $this->assertEquals(
+            $this->list->all(),
+            $copy->all(),
+        );
+        $this->assertSame(
+            $this->list->all(),
+            $copy->all(),
+        );
+        $copy = $this->object->copy();
+        $this->assertEquals(
+            $this->object->all(),
+            $copy->all(),
+        );
+        $this->assertNotSame(
+            $this->object->all(),
+            $copy->all(),
+        );
+    }
+
+    /**
      * Test if can create collections by filtering the previous one.
      */
     public function testFiltersValues(): void
