@@ -88,6 +88,34 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can access values using array notation.
+     */
+    public function testAccessesValuesLikeArrays(): void
+    {
+        $this->assertSame('A320', $this->associative['model']);
+        $this->assertSame('Airbus', $this->associative['manufacturer']);
+        $this->assertSame(2, $this->associative['crew']);
+        $this->assertSame(1988, $this->associative['introduction']);
+        $this->assertTrue(isset($this->associative['model']));
+        unset($this->associative['model']);
+        $this->assertFalse(isset($this->associative['model']));
+        $this->associative['manufacturer'] = 'Boeing';
+        $this->assertSame('Boeing', $this->associative['manufacturer']);
+        $this->assertSame(
+            'Aeroporto Internacional Salgado Filho',
+            $this->object['name'],
+        );
+        $this->assertSame('POA', $this->object['iata']);
+        $this->assertSame('SBPA', $this->object['icao']);
+        $this->assertSame('Porto Alegre', $this->object['city']);
+        $this->assertTrue(isset($this->object['iata']));
+        unset($this->object['iata']);
+        $this->assertFalse(isset($this->object['iata']));
+        $this->object['city'] = 'P. Alegre';
+        $this->assertSame('P. Alegre', $this->object['city']);
+    }
+
+    /**
      * Test if can create copies that DON'T reference the original values.
      */
     public function testCreatesCopies(): void
@@ -425,6 +453,37 @@ final class CollectionTest extends TestCase
         $this->assertEquals((object) $this->sources['list'], $result);
         $result = $this->object->toObject();
         $this->assertEquals($this->sources['object'], $result);
+    }
+
+    /**
+     * Test if can set and unset values.
+     */
+    public function testSetsAndUnsetsValues(): void
+    {
+        $this->associative
+            ->set('model', '737-400')
+            ->set('manufacturer', 'Boeing')
+            ->unset('introduction')
+            ->unset('crew');
+        $this->assertEquals(
+            [
+                'model' => '737-400',
+                'manufacturer' => 'Boeing',
+            ],
+            $this->associative->all(),
+        );
+        $this->object
+            ->unset('name')
+            ->unset('city')
+            ->set('iata', 'ABC')
+            ->set('icao', 'WXYZ');
+        $this->assertEquals(
+            (object) [
+                'iata' => 'ABC',
+                'icao' => 'WXYZ',
+            ],
+            $this->object->all(),
+        );
     }
 
     /**

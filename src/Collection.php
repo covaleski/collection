@@ -2,9 +2,10 @@
 
 namespace Covaleski\Collection;
 
+use ArrayAccess;
 use Countable;
 
-class Collection implements Countable
+class Collection implements ArrayAccess, Countable
 {
     /**
      * Create the collection instance.
@@ -87,6 +88,16 @@ class Collection implements Countable
     }
 
     /**
+     * Check whether a value exists at the specified key.
+     */
+    public function isset(int|string $key): bool
+    {
+        return is_array($this->values)
+            ? array_key_exists($key, $this->values)
+            : property_exists($this->values, $key);
+    }
+
+    /**
      * Create a collection containing all stored keys.
      */
     public function keys(): static
@@ -144,6 +155,51 @@ class Collection implements Countable
         $index = $position < 0 ? $this->count() + $position : $position;
         $key = $this->keys()->get($index);
         return $this->get($key);
+    }
+
+    /**
+     * Check whether an offset exists.
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return $this->isset($offset);
+    }
+
+    /**
+     * Access the value at the specified offset.
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * Set the value at the specified offset.
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    /**
+     * Remove the value at the specified offset.
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        $this->unset($offset);
+    }
+
+    /**
+     * Set the value at the specified key.
+     */
+    public function set(int|string $key, mixed $value): static
+    {
+        if (is_array($this->values)) {
+            $this->values[$key] = $value;
+        } else {
+            $this->values->$key = $value;
+        }
+        return $this;
     }
 
     /**
