@@ -15,6 +15,14 @@ class Collection implements Countable
     }
 
     /**
+     * Get stored values.
+     */
+    public function all(): array|object
+    {
+        return $this->values;
+    }
+
+    /**
      * Create a collection with all the values from the specified column.
      */
     public function column(string $key): static

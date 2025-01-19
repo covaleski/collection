@@ -34,6 +34,25 @@ final class CollectionTest extends TestCase
     protected array $sources;
 
     /**
+     * Test if can access all the collection values.
+     */
+    public function testAccessesAllValues(): void
+    {
+        $this->assertSame(
+            $this->sources['associative'],
+            $this->associative->all(),
+        );
+        $this->assertSame(
+            $this->sources['list'],
+            $this->list->all(),
+        );
+        $this->assertSame(
+            $this->sources['object'],
+            $this->object->all(),
+        );
+    }
+
+    /**
      * Test if can access values using keys.
      */
     public function testAccessesValuesByKeys(): void
@@ -94,7 +113,7 @@ final class CollectionTest extends TestCase
                     $this->assertIsObject($value);
                     return $value->origin === 'GRU';
                 })
-                ->toArray(),
+                ->all(),
         );
     }
 
@@ -105,7 +124,7 @@ final class CollectionTest extends TestCase
     {
         $this->assertEquals(
             ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
-            $this->list->column('call_sign')->toArray(),
+            $this->list->column('call_sign')->all(),
         );
     }
 
@@ -116,15 +135,15 @@ final class CollectionTest extends TestCase
     {
         $this->assertEquals(
             ['model', 'manufacturer', 'crew', 'introduction'],
-            $this->associative->keys()->toArray(),
+            $this->associative->keys()->all(),
         );
         $this->assertEquals(
             [0, 1, 2, 3, 4],
-            $this->list->keys()->toArray(),
+            $this->list->keys()->all(),
         );
         $this->assertEquals(
             ['name', 'iata', 'icao', 'city'],
-            $this->object->keys()->toArray(),
+            $this->object->keys()->all(),
         );
     }
 
@@ -135,7 +154,7 @@ final class CollectionTest extends TestCase
     {
         $this->assertEquals(
             ['A320', 'Airbus', 2, 1988],
-            $this->associative->values()->toArray(),
+            $this->associative->values()->all(),
         );
         $this->assertEquals(
             [
@@ -144,11 +163,11 @@ final class CollectionTest extends TestCase
                 'SBPA',
                 'Porto Alegre',
             ],
-            $this->object->values()->toArray(),
+            $this->object->values()->all(),
         );
         $this->assertEquals(
             $this->sources['list'],
-            $this->list->values()->toArray(),
+            $this->list->values()->all(),
         );
     }
 
@@ -208,7 +227,7 @@ final class CollectionTest extends TestCase
                     $this->assertIsString($value);
                     return "{$key}={$value}";
                 })
-                ->toArray(),
+                ->all(),
         );
         $this->assertEquals(
             [
@@ -224,7 +243,7 @@ final class CollectionTest extends TestCase
                     $this->assertIsObject($value);
                     return "#{$key}: {$value->origin} -> {$value->destination}";
                 })
-                ->toArray(),
+                ->all(),
         );
     }
 
@@ -250,7 +269,7 @@ final class CollectionTest extends TestCase
                 'role' => 'Narrow-body airliner',
                 'status' => 'In service',
             ],
-            $this->associative->merge($a, $b)->toArray(),
+            $this->associative->merge($a, $b)->all(),
         );
     }
 
@@ -318,7 +337,7 @@ final class CollectionTest extends TestCase
                     'destination' => 'POA',
                 ],
             ],
-            $this->list->merge($collection)->toArray(),
+            $this->list->merge($collection)->all(),
         );
     }
 
@@ -336,7 +355,7 @@ final class CollectionTest extends TestCase
             'state' => 'Rio Grande do Sul',
         ]);
         $this->assertEquals(
-            [
+            (object) [
                 'name' => 'Aeroporto Internacional de Porto Alegre',
                 'iata' => 'POA',
                 'icao' => 'SBPA',
@@ -344,7 +363,7 @@ final class CollectionTest extends TestCase
                 'country' => 'Brazil',
                 'state' => 'Rio Grande do Sul',
             ],
-            $this->object->merge($a, $b)->toArray(),
+            $this->object->merge($a, $b)->all(),
         );
     }
 
@@ -358,14 +377,14 @@ final class CollectionTest extends TestCase
                 'manufacturer' => 'Airbus',
                 'crew' => 2,
             ],
-            $this->associative->slice(1, 2)->toArray(),
+            $this->associative->slice(1, 2)->all(),
         );
         $this->assertSame(
             [
                 'manufacturer' => 'Airbus',
                 'crew' => 2,
             ],
-            $this->associative->slice(-3, -1)->toArray(),
+            $this->associative->slice(-3, -1)->all(),
         );
         $this->assertEquals(
             [
@@ -388,11 +407,11 @@ final class CollectionTest extends TestCase
                     'destination' => 'CXJ',
                 ],
             ],
-            $this->list->slice(-3)->toArray(),
+            $this->list->slice(-3)->all(),
         );
-        $this->assertEquals([], $this->list->slice(8, -2)->toArray());
-        $this->assertEquals([], $this->list->slice(0, -8)->toArray());
-        $this->assertEquals([], $this->list->slice(-8, -8)->toArray());
+        $this->assertEquals([], $this->list->slice(8, -2)->all());
+        $this->assertEquals([], $this->list->slice(0, -8)->all());
+        $this->assertEquals([], $this->list->slice(-8, -8)->all());
     }
 
     /**
