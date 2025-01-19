@@ -65,7 +65,9 @@ class Collection implements ArrayAccess, Countable
             return count($this->values);
         } else {
             $count = 0;
-            foreach ($this->values as $unused) $count++;
+            foreach ($this->values as $unused) {
+                $count++;
+            }
             return $count;
         }
     }
@@ -293,8 +295,12 @@ class Collection implements ArrayAccess, Countable
                     $set_values[$key] = $value;
                 }
             });
-            foreach ($unset_keys as $key) $this->unset($key);
-            foreach ($set_values as $key => $value) $this->set($key, $value);
+            foreach ($unset_keys as $key) {
+                $this->unset($key);
+            }
+            foreach ($set_values as $key => $value) {
+                $this->set($key, $value);
+            }
             return $first_value;
         }
     }
@@ -369,8 +375,12 @@ class Collection implements ArrayAccess, Countable
                     $set_values[$key] = $value;
                 }
             });
-            foreach ($unset_keys as $key) $this->unset($key);
-            foreach ($set_values as $key => $value) $this->set($key, $value);
+            foreach ($unset_keys as $key) {
+                $this->unset($key);
+            }
+            foreach ($set_values as $key => $value) {
+                $this->set($key, $value);
+            }
         }
         return $this;
     }

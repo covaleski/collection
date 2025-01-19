@@ -480,36 +480,8 @@ final class CollectionTest extends TestCase
     }
 
     /**
-     * Test if can set and unset values.
+     * Test if can set and unset entire columns.
      */
-    public function testSetsAndUnsetsValues(): void
-    {
-        $this->associative
-            ->set('model', '737-400')
-            ->set('manufacturer', 'Boeing')
-            ->unset('introduction')
-            ->unset('crew');
-        $this->assertEquals(
-            [
-                'model' => '737-400',
-                'manufacturer' => 'Boeing',
-            ],
-            $this->associative->all(),
-        );
-        $this->object
-            ->unset('name')
-            ->unset('city')
-            ->set('iata', 'ABC')
-            ->set('icao', 'WXYZ');
-        $this->assertEquals(
-            (object) [
-                'iata' => 'ABC',
-                'icao' => 'WXYZ',
-            ],
-            $this->object->all(),
-        );
-    }
-
     public function testSetsAndUnsetsColumns(): void
     {
         $this->assertEquals(
@@ -560,6 +532,37 @@ final class CollectionTest extends TestCase
                 ->assign('country', 'BRA')
                 ->drop('city')
                 ->all(),
+        );
+    }
+
+    /**
+     * Test if can set and unset values.
+     */
+    public function testSetsAndUnsetsValues(): void
+    {
+        $this->associative
+            ->set('model', '737-400')
+            ->set('manufacturer', 'Boeing')
+            ->unset('introduction')
+            ->unset('crew');
+        $this->assertEquals(
+            [
+                'model' => '737-400',
+                'manufacturer' => 'Boeing',
+            ],
+            $this->associative->all(),
+        );
+        $this->object
+            ->unset('name')
+            ->unset('city')
+            ->set('iata', 'ABC')
+            ->set('icao', 'WXYZ');
+        $this->assertEquals(
+            (object) [
+                'iata' => 'ABC',
+                'icao' => 'WXYZ',
+            ],
+            $this->object->all(),
         );
     }
 
