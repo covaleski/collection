@@ -3,7 +3,6 @@
 namespace Covaleski\Collection;
 
 use Countable;
-use stdClass;
 
 class Collection implements Countable
 {
@@ -15,7 +14,7 @@ class Collection implements Countable
     }
 
     /**
-     * Get stored values.
+     * Get all stored values.
      */
     public function all(): array|object
     {
@@ -23,7 +22,7 @@ class Collection implements Countable
     }
 
     /**
-     * Create a collection with all the values from the specified column.
+     * Create a collection with values from each element at the specified key.
      */
     public function column(string $key): static
     {
@@ -34,7 +33,7 @@ class Collection implements Countable
     }
 
     /**
-     * Get the current length.
+     * Count stored values.
      */
     public function count(): int
     {
@@ -42,13 +41,13 @@ class Collection implements Countable
             return count($this->values);
         } else {
             $count = 0;
-            foreach ($this->values as $value) $count++;
+            foreach ($this->values as $unused) $count++;
             return $count;
         }
     }
 
     /**
-     * Create a collection with values that pass the specified callback.
+     * Create a collection with the values that pass the specified callback.
      */
     public function filter(callable $callback): static
     {
@@ -70,7 +69,7 @@ class Collection implements Countable
     }
 
     /**
-     * Access the first stored value or the one at the specified key.
+     * Access the value at the specified key.
      */
     public function get(string $key): mixed
     {
@@ -80,7 +79,7 @@ class Collection implements Countable
     }
 
     /**
-     * Create a collection containing this collection's keys.
+     * Create a collection containing all stored keys.
      */
     public function keys(): static
     {
@@ -108,7 +107,7 @@ class Collection implements Countable
     }
 
     /**
-     * Create a collection merging contents from other collections.
+     * Create a collection merging contents from multiple collections.
      */
     public function merge(Collection ...$collections): static
     {
@@ -130,7 +129,7 @@ class Collection implements Countable
     }
 
     /**
-     * Get the `$index`th element.
+     * Access the value at the specified position.
      */
     public function nth(int $position): mixed
     {
@@ -140,7 +139,7 @@ class Collection implements Countable
     }
 
     /**
-     * Create a collection from a section of the current values.
+     * Create a collection from a part of the current values.
      */
     public function slice(int $offset = 0, null|int $length = null): static
     {
@@ -163,7 +162,7 @@ class Collection implements Countable
     }
 
     /**
-     * Get stored values as an array.
+     * Cast stored values as an array.
      */
     public function toArray(): array
     {
@@ -171,7 +170,7 @@ class Collection implements Countable
     }
 
     /**
-     * Get stored values as an object.
+     * Cast stored values as an object.
      */
     public function toObject(): object
     {
@@ -192,7 +191,7 @@ class Collection implements Countable
     }
 
     /**
-     * Create a collection containing this collection's values.
+     * Create a collection containing all stored keys - discard keys.
      */
     public function values(): static
     {
@@ -200,7 +199,7 @@ class Collection implements Countable
     }
 
     /**
-     * Run the specified callback over each element.
+     * Run the specified callback over each stored value.
      */
     public function walk(callable $callback): static
     {
