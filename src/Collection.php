@@ -102,7 +102,7 @@ class Collection implements ArrayAccess, Countable
     /**
      * Get the first stored value.
      */
-    public function first(): mixed
+    public function first(mixed $default = null): mixed
     {
         return $this->nth(0);
     }
@@ -110,11 +110,15 @@ class Collection implements ArrayAccess, Countable
     /**
      * Access the value at the specified key.
      */
-    public function get(string $key): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        return is_array($this->values)
-            ? $this->values[$key]
-            : $this->values->$key;
+        if ($this->isset($key)) {
+            return is_array($this->values)
+                ? $this->values[$key]
+                : $this->values->$key;
+        } else {
+            return $default;
+        }
     }
 
     /**
@@ -138,9 +142,9 @@ class Collection implements ArrayAccess, Countable
     /**
      * Get the last stored value.
      */
-    public function last(): mixed
+    public function last(mixed $default = null): mixed
     {
-        return $this->nth(-1);
+        return $this->nth(-1, $default);
     }
 
     /**
@@ -180,11 +184,10 @@ class Collection implements ArrayAccess, Countable
     /**
      * Access the value at the specified position.
      */
-    public function nth(int $position): mixed
+    public function nth(int $position, mixed $default = null): mixed
     {
-        $index = $position < 0 ? $this->count() + $position : $position;
-        $key = $this->keys()->get($index);
-        return $this->get($key);
+        $key = $this->getKey($position);
+        return $key === null ? $default : $this->get($key);
     }
 
     /**
@@ -220,6 +223,43 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Remove and return the last stored value.
+     */
+    public function pop(): mixed
+    {
+        if (is_array($this->values())) {
+            return array_pop($this->values);
+        } else {
+            $key = $this->getKey(-1);
+            if ($key === null) {
+                return null;
+            } else {
+                $value = $this->get($key);
+                $this->unset($key);
+                return $value;
+            }
+        }
+    }
+
+    /**
+     * Store a value at the end of the collection.
+     */
+    public function push(mixed ...$values): static
+    {
+        if (is_array($this->values)) {
+            array_push($this->values, ...$values);
+        } else {
+            $start = (int) $this->keys()
+                ->filter(fn ($k) => ctype_digit($k))
+                ->last(-1) + 1;
+            foreach ($values as $i => $value) {
+                $this->values->{$start + $i} = $value;
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Set the value at the specified key.
      */
     public function set(int|string $key, mixed $value): static
@@ -230,6 +270,33 @@ class Collection implements ArrayAccess, Countable
             $this->values->$key = $value;
         }
         return $this;
+    }
+
+    /**
+     * Remove the first value of the collection.
+     */
+    public function shift(): mixed
+    {
+        if (is_array($this->values)) {
+            return array_shift($this->values);
+        } else {
+            $first_key = $this->getKey(0);
+            $first_value = $this->get($first_key);
+            $this->unset($first_key);
+            $unset_keys = [];
+            $set_values = [];
+            $this->walk(function ($value, $key) use (&$unset_keys, &$set_values) {
+                $unset_keys[] = $key;
+                if (ctype_digit($key)) {
+                    $set_values[] = $value;
+                } else {
+                    $set_values[$key] = $value;
+                }
+            });
+            foreach ($unset_keys as $key) $this->unset($key);
+            foreach ($set_values as $key => $value) $this->set($key, $value);
+            return $first_value;
+        }
     }
 
     /**
@@ -285,6 +352,30 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Add a value to the beginning of the collection.
+     */
+    public function unshift(mixed ...$values): static
+    {
+        if (is_array($this->values)) {
+            array_unshift($this->values, ...$values);
+        } else {
+            $unset_keys = [];
+            $set_values = $values;
+            $this->walk(function ($value, $key) use (&$unset_keys, &$set_values) {
+                $unset_keys[] = $key;
+                if (ctype_digit($key)) {
+                    $set_values[] = $value;
+                } else {
+                    $set_values[$key] = $value;
+                }
+            });
+            foreach ($unset_keys as $key) $this->unset($key);
+            foreach ($set_values as $key => $value) $this->set($key, $value);
+        }
+        return $this;
+    }
+
+    /**
      * Create a collection containing all stored keys - discard keys.
      */
     public function values(): static
@@ -309,5 +400,15 @@ class Collection implements ArrayAccess, Countable
     protected function clone(): array|object
     {
         return is_array($this->values) ? $this->values : clone $this->values;
+    }
+
+    /**
+     * Get the key at the specified position.
+     */
+    protected function getKey(int $position): null|int|string
+    {
+        $index = $position < 0 ? $this->count() + $position : $position;
+        $keys = $this->keys();
+        return $keys->isset($index) ? $keys->get($index) : null;
     }
 }

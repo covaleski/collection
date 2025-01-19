@@ -21,16 +21,16 @@ Type agnostic wrapper to manipulate objects and arrays.
 - [X] `map($callback)`
 - [X] `merge(...$collections)`
 - [X] `nth($index)`
-- [ ] `pop()`
-- [ ] `push($value)`
+- [X] `pop()`
+- [X] `push($value)`
 - [ ] `reduce($callback)`
 - [ ] `reverse()`
 - [X] `set($key, $value)`
-- [ ] `shift()`
+- [X] `shift()`
 - [X] `slice($offset, $length)`
 - [ ] `some($callback)`
 - [ ] `sort($callback)`
 - [X] `unset($key)`
-- [ ] `unshift($value)`
+- [X] `unshift($value)`
 - [X] `values()`
 - [X] `walk($callback)`

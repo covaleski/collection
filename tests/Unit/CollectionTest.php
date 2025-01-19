@@ -115,6 +115,30 @@ final class CollectionTest extends TestCase
         $this->assertSame('P. Alegre', $this->object['city']);
     }
 
+    public function testAddsAndRemovesValuesLikeArrays(): void
+    {
+        $array = new Collection(['John', 'Mary', 'Paul', 'Jane']);
+        $this->assertSame('Jane', $array->pop());
+        $this->assertSame('John', $array->shift());
+        $this->assertEquals(
+            ['James', 'Meghan', 'Mary', 'Paul', 'Linda', 'Jack'],
+            $array
+                ->push('Linda', 'Jack')
+                ->unshift('James', 'Meghan')
+                ->all(),
+        );
+        $object = new Collection((object) ['Ford', 'Opel', 'Renault', 'Fiat']);
+        $this->assertSame('Fiat', $object->pop());
+        $this->assertSame('Ford', $object->shift());
+        $this->assertEquals(
+            (object) ['Toyota', 'Subaru', 'Opel', 'Renault', 'BMW', 'BYD'],
+            $object
+                ->push('BMW', 'BYD')
+                ->unshift('Toyota', 'Subaru')
+                ->all(),
+        );
+    }
+
     /**
      * Test if can create copies that DON'T reference the original values.
      */
