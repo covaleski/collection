@@ -368,6 +368,32 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can cast values as arrays.
+     */
+    public function testOutputsArrays(): void
+    {
+        $result = $this->associative->toArray();
+        $this->assertEquals($this->sources['associative'], $result);
+        $result = $this->list->toArray();
+        $this->assertEquals($this->sources['list'], $result);
+        $result = $this->object->toArray();
+        $this->assertEquals((array) $this->sources['object'], $result);
+    }
+
+    /**
+     * Test if can cast values as objects.
+     */
+    public function testOutputsObject(): void
+    {
+        $result = $this->associative->toObject();
+        $this->assertEquals((object) $this->sources['associative'], $result);
+        $result = $this->list->toObject();
+        $this->assertEquals((object) $this->sources['list'], $result);
+        $result = $this->object->toObject();
+        $this->assertEquals($this->sources['object'], $result);
+    }
+
+    /**
      * Test if can create collections with a slice of the previous one.
      */
     public function testSlicesValues(): void
@@ -412,6 +438,28 @@ final class CollectionTest extends TestCase
         $this->assertEquals([], $this->list->slice(8, -2)->all());
         $this->assertEquals([], $this->list->slice(0, -8)->all());
         $this->assertEquals([], $this->list->slice(-8, -8)->all());
+    }
+
+    /**
+     * Test if can unset collection keys.
+     */
+    public function testUnsetsKeys(): void
+    {
+        $this->associative
+            ->unset('introduction')
+            ->unset('manufacturer')
+            ->unset('model');
+        $this->assertEquals(['crew' => 2], $this->associative->all());
+        $this->object
+            ->unset('name')
+            ->unset('city');
+        $this->assertEquals(
+            (object) [
+                'iata' => 'POA',
+                'icao' => 'SBPA',
+            ],
+            $this->object->all(),
+        );
     }
 
     /**

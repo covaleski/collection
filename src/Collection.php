@@ -217,12 +217,4 @@ class Collection implements Countable
     {
         return is_array($this->values) ? $this->values : clone $this->values;
     }
-
-    /**
-     * Create an empty set of data.
-     */
-    protected function create(): array|object
-    {
-        return is_array($this->values) ? [] : new stdClass;
-    }
 }
