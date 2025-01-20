@@ -329,6 +329,31 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Sort stored values.
+     */
+    public function sort(null|callable $callback = null): static
+    {
+        if (is_array($this->values)) {
+            if ($callback === null) {
+                asort($this->values);
+            } else {
+                uasort($this->values, $callback);
+            }
+        } else {
+            $values = $this->toArray();
+            if ($callback === null) {
+                asort($values);
+            } else {
+                uasort($values, $callback);
+            }
+            foreach ($values as $key => $value) {
+                $this->unset($key)->set($key, $value);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Cast stored values as an array.
      */
     public function toArray(): array

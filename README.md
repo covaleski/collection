@@ -29,7 +29,7 @@ Type agnostic wrapper to manipulate objects and arrays.
 - [X] `shift()`
 - [X] `slice($offset, $length)`
 - [ ] `some($callback)`
-- [ ] `sort($callback)`
+- [X] `sort($callback)`
 - [X] `unset($key)`
 - [X] `unshift($value)`
 - [X] `values()`

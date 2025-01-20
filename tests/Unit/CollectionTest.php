@@ -614,6 +614,70 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can sort values from stored array.
+     */
+    public function testSortsArrays(): void
+    {
+        $this->associative->sort();
+        $this->assertEquals(
+            ['crew', 'introduction', 'model', 'manufacturer'],
+            $this->associative->keys()->all(),
+        );
+        $this->assertEquals(
+            [2, 1988, 'A320', 'Airbus'],
+            $this->associative->values()->all(),
+        );
+        $this->associative->sort(function ($a, $b) {
+            return strlen(strval($b)) <=> strlen(strval($a));
+        });
+        $this->assertEquals(
+            ['manufacturer', 'introduction', 'model', 'crew'],
+            $this->associative->keys()->all(),
+        );
+        $this->assertEquals(
+            ['Airbus', 1988, 'A320', 2],
+            $this->associative->values()->all(),
+        );
+    }
+
+    /**
+     * Test if can sort values from stored array.
+     */
+    public function testSortsObjects(): void
+    {
+        $this->object->sort();
+        $this->assertEquals(
+            ['name', 'iata', 'city', 'icao'],
+            $this->object->keys()->all(),
+        );
+        $this->assertEquals(
+            [
+                'Aeroporto Internacional Salgado Filho',
+                'POA',
+                'Porto Alegre',
+                'SBPA',
+            ],
+            $this->object->values()->all(),
+        );
+        $this->object->sort(function ($a, $b) {
+            return strlen(strval($a)) <=> strlen(strval($b));
+        });
+        $this->assertEquals(
+            ['iata', 'icao', 'city', 'name'],
+            $this->object->keys()->all(),
+        );
+        $this->assertEquals(
+            [
+                'POA',
+                'SBPA',
+                'Porto Alegre',
+                'Aeroporto Internacional Salgado Filho',
+            ],
+            $this->object->values()->all(),
+        );
+    }
+
+    /**
      * Test if can unset collection keys.
      */
     public function testUnsetsKeys(): void
