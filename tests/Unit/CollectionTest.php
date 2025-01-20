@@ -61,6 +61,8 @@ final class CollectionTest extends TestCase
         $this->assertSame('Airbus', $this->associative->get('manufacturer'));
         $this->assertSame(2, $this->associative->get('crew'));
         $this->assertSame(1988, $this->associative->get('introduction'));
+        $this->assertNull($this->object->get('engines'));
+        $this->assertSame(2, $this->object->get('engines', 2));
         $this->assertSame(
             'Aeroporto Internacional Salgado Filho',
             $this->object->get('name'),
@@ -68,6 +70,8 @@ final class CollectionTest extends TestCase
         $this->assertSame('POA', $this->object->get('iata'));
         $this->assertSame('SBPA', $this->object->get('icao'));
         $this->assertSame('Porto Alegre', $this->object->get('city'));
+        $this->assertNull($this->object->get('country'));
+        $this->assertSame('Brazil', $this->object->get('country', 'Brazil'));
     }
 
     /**
@@ -79,10 +83,14 @@ final class CollectionTest extends TestCase
         $this->assertSame('Airbus', $this->associative->nth(1));
         $this->assertSame(2, $this->associative->nth(2));
         $this->assertSame(1988, $this->associative->nth(3));
+        $this->assertNull($this->associative->nth(4));
+        $this->assertSame('???', $this->associative->nth(4, '???'));
         $this->assertSame('A320', $this->associative->nth(-4));
         $this->assertSame('Airbus', $this->associative->nth(-3));
         $this->assertSame(2, $this->associative->nth(-2));
         $this->assertSame(1988, $this->associative->nth(-1));
+        $this->assertNull($this->associative->nth(-5));
+        $this->assertSame('???', $this->associative->nth(-5, '???'));
         $this->assertSame('A320', $this->associative->first());
         $this->assertSame(1988, $this->associative->last());
     }
@@ -127,6 +135,14 @@ final class CollectionTest extends TestCase
                 ->unshift('James', 'Meghan')
                 ->all(),
         );
+        $this->assertSame('James', $array->shift());
+        $this->assertSame('Meghan', $array->shift());
+        $this->assertSame('Mary', $array->shift());
+        $this->assertSame('Jack', $array->pop());
+        $this->assertSame('Linda', $array->pop());
+        $this->assertSame('Paul', $array->pop());
+        $this->assertNull($array->shift());
+        $this->assertNull($array->pop());
         $object = new Collection((object) ['Ford', 'Opel', 'Renault', 'Fiat']);
         $this->assertSame('Fiat', $object->pop());
         $this->assertSame('Ford', $object->shift());
@@ -136,6 +152,28 @@ final class CollectionTest extends TestCase
                 ->push('BMW', 'BYD')
                 ->unshift('Toyota', 'Subaru')
                 ->all(),
+        );
+        $this->assertSame('Toyota', $object->shift());
+        $this->assertSame('Subaru', $object->shift());
+        $this->assertSame('Opel', $object->shift());
+        $this->assertSame('BYD', $object->pop());
+        $this->assertSame('BMW', $object->pop());
+        $this->assertSame('Renault', $object->pop());
+        $this->assertNull($object->shift());
+        $this->assertNull($object->pop());
+        $array = new Collection(['Apple', 'Banana', 'foo' => 'Orange']);
+        $this->assertSame('Apple', $array->shift());
+        $array->unshift('Watermelon');
+        $this->assertEquals(
+            ['Watermelon', 'Banana', 'foo' => 'Orange'],
+            $array->all(),
+        );
+        $object = new Collection((object) ['A', 'B', 'foo' => 'C', 'D']);
+        $this->assertSame('A', $object->shift());
+        $object->unshift('Z');
+        $this->assertEquals(
+            (object) ['Z', 'B', 'foo' => 'C', 'D'],
+            $object->all(),
         );
     }
 

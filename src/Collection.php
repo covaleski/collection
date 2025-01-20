@@ -229,7 +229,7 @@ class Collection implements ArrayAccess, Countable
      */
     public function pop(): mixed
     {
-        if (is_array($this->values())) {
+        if (is_array($this->values)) {
             return array_pop($this->values);
         } else {
             $key = $this->getKey(-1);
@@ -283,6 +283,9 @@ class Collection implements ArrayAccess, Countable
             return array_shift($this->values);
         } else {
             $first_key = $this->getKey(0);
+            if ($first_key === null) {
+                return null;
+            }
             $first_value = $this->get($first_key);
             $this->unset($first_key);
             $unset_keys = [];
