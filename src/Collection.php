@@ -4,9 +4,20 @@ namespace Covaleski\Collection;
 
 use ArrayAccess;
 use Countable;
+use Iterator;
 
-class Collection implements ArrayAccess, Countable
+class Collection implements ArrayAccess, Countable, Iterator
 {
+    /**
+     * Current iterator key.
+     */
+    protected int $key;
+
+    /**
+     * Cached iterator keys.
+     */
+    protected array $keys;
+
     /**
      * Create the collection instance.
      */
@@ -73,6 +84,16 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Return the current element.
+     */
+    public function current(): mixed
+    {
+        return is_array($this->values)
+            ? $this->values[$this->keys[$this->key]]
+            : $this->values->{$this->keys[$this->key]};
+    }
+
+    /**
      * Remove the specified key from all stored values.
      */
     public function drop(int|string $key): static
@@ -93,11 +114,11 @@ class Collection implements ArrayAccess, Countable
     public function filter(callable $callback): static
     {
         $result = $this->copy();
-        $this->walk(function ($value, $key) use ($callback, $result) {
+        foreach ($this as $key => $value) {
             if (!call_user_func($callback, $value, $key)) {
                 $result->unset($key);
             }
-        });
+        }
         return $result;
     }
 
@@ -134,11 +155,19 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Return the key of the current element.
+     */
+    public function key(): mixed
+    {
+        return $this->keys[$this->key] ?? null;
+    }
+
+    /**
      * Create a collection containing all stored keys.
      */
     public function keys(): static
     {
-        return $this->map(fn ($_, $k) => $k);
+        return new static($this->getKeys());
     }
 
     /**
@@ -168,7 +197,7 @@ class Collection implements ArrayAccess, Countable
     {
         $result = $this->clone();
         foreach ($collections as $collection) {
-            $collection->walk(function ($value, $key) use (&$result) {
+            foreach ($collection as $key => $value) {
                 if (is_array($result)) {
                     if (is_int($key)) {
                         $result[] = $value;
@@ -178,9 +207,17 @@ class Collection implements ArrayAccess, Countable
                 } else {
                     $result->$key = $value;
                 }
-            });
+            }
         }
         return new static($result);
+    }
+
+    /**
+     * Advance the internal pointer of an array.
+     */
+    public function next(): void
+    {
+        $this->key++;
     }
 
     /**
@@ -262,6 +299,15 @@ class Collection implements ArrayAccess, Countable
     }
 
     /**
+     * Rewind the Iterator to the first element.
+     */
+    public function rewind(): void
+    {
+        $this->keys = $this->getKeys();
+        $this->key = 0;
+    }
+
+    /**
      * Set the value at the specified key.
      */
     public function set(int|string $key, mixed $value): static
@@ -282,29 +328,18 @@ class Collection implements ArrayAccess, Countable
         if (is_array($this->values)) {
             return array_shift($this->values);
         } else {
-            $first_key = $this->getKey(0);
-            if ($first_key === null) {
-                return null;
-            }
-            $first_value = $this->get($first_key);
-            $this->unset($first_key);
-            $unset_keys = [];
-            $set_values = [];
-            $this->walk(function ($value, $key) use (&$unset_keys, &$set_values) {
-                $unset_keys[] = $key;
-                if (ctype_digit($key)) {
-                    $set_values[] = $value;
-                } else {
-                    $set_values[$key] = $value;
-                }
-            });
-            foreach ($unset_keys as $key) {
+            $index = 0;
+            foreach ($this->getKeys() as $i => $key) {
+                $value = $this->get($key);
                 $this->unset($key);
+                if ($i > 0) {
+                    $new_key = ctype_digit($key) ? $index++ : $key;
+                    $this->set($new_key, $value);
+                } else {
+                    $first = $value;
+                }
             }
-            foreach ($set_values as $key => $value) {
-                $this->set($key, $value);
-            }
-            return $first_value;
+            return $first ?? null;
         }
     }
 
@@ -393,16 +428,17 @@ class Collection implements ArrayAccess, Countable
         if (is_array($this->values)) {
             array_unshift($this->values, ...$values);
         } else {
+            foreach ($this->getKeys() as $key) {}
             $unset_keys = [];
             $set_values = $values;
-            $this->walk(function ($value, $key) use (&$unset_keys, &$set_values) {
+            foreach ($this as $key => $value) {
                 $unset_keys[] = $key;
                 if (ctype_digit($key)) {
                     $set_values[] = $value;
                 } else {
                     $set_values[$key] = $value;
                 }
-            });
+            }
             foreach ($unset_keys as $key) {
                 $this->unset($key);
             }
@@ -411,6 +447,14 @@ class Collection implements ArrayAccess, Countable
             }
         }
         return $this;
+    }
+
+    /**
+     * Checks if current position is valid.
+     */
+    public function valid(): bool
+    {
+        return array_key_exists($this->key, $this->keys);
     }
 
     /**
@@ -446,7 +490,24 @@ class Collection implements ArrayAccess, Countable
     protected function getKey(int $position): null|int|string
     {
         $index = $position < 0 ? $this->count() + $position : $position;
-        $keys = $this->keys();
-        return $keys->isset($index) ? $keys->get($index) : null;
+        $keys = $this->getKeys();
+        return array_key_exists($index, $keys) ? $keys[$index] : null;
+    }
+
+    /**
+     * Get all keys.
+     */
+    protected function getKeys(): array
+    {
+        return is_array($this->values)
+            ? array_keys($this->values)
+            : array_map('strval', array_keys(get_object_vars($this->values)));
+    }
+
+    /**
+     * Reset the collection numeric keys.
+     */
+    protected function resetKeys(): void
+    {
     }
 }

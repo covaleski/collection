@@ -309,6 +309,38 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can iterate stored values.
+     */
+    public function testIsIterable(): void
+    {
+        $keys = array_keys($this->sources['associative']);
+        $values = array_values($this->sources['associative']);
+        $i = 0;
+        foreach ($this->associative as $key => $value) {
+            $this->assertSame($keys[$i], $key);
+            $this->assertSame($values[$i], $value);
+            $i++;
+        }
+        $vars = get_object_vars($this->sources['object']);
+        $keys = array_map('strval', array_keys($vars));
+        $values = array_values($vars);
+        $i = 0;
+        foreach ($this->object as $key => $value) {
+            $this->assertSame($keys[$i], $key);
+            $this->assertSame($values[$i], $value);
+            $i++;
+        }
+        $keys = array_keys($this->sources['list']);
+        $values = array_values($this->sources['list']);
+        $i = 0;
+        foreach ($this->list as $key => $value) {
+            $this->assertSame($keys[$i], $key);
+            $this->assertSame($values[$i], $value);
+            $i++;
+        }
+    }
+
+    /**
      * Test if can run callbacks for each element.
      */
     public function testIteratesValues(): void
