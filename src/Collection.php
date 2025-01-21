@@ -503,11 +503,4 @@ class Collection implements ArrayAccess, Countable, Iterator
             ? array_keys($this->values)
             : array_map('strval', array_keys(get_object_vars($this->values)));
     }
-
-    /**
-     * Reset the collection numeric keys.
-     */
-    protected function resetKeys(): void
-    {
-    }
 }
