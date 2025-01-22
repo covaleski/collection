@@ -6,7 +6,7 @@ Type agnostic wrapper to manipulate objects and arrays.
 
 - [X] Implement `ArrayAccess`
 - [X] Implement `Coutable`
-- [ ] Implement `Iterator`
+- [X] Implement `Iterator`
 - [X] `all()`
 - [X] `assign($column, $value)`
 - [X] `column($key)`
