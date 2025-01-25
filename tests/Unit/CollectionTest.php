@@ -242,6 +242,85 @@ final class CollectionTest extends TestCase
     }
 
     /**
+     * Test if can filter values by column.
+     */
+    public function testFiltersValuesByColumn(): void
+    {
+        $this->sources['list'][0]->departed_at = '2025-01-21 12:14:52';
+        $this->sources['list'][1]->departed_at = '2025-01-21 16:41:59';
+        $this->sources['list'][2]->departed_at = '2025-01-22 08:12:30';
+        $this->sources['list'][3]->departed_at = '2025-01-22 17:18:19';
+        $this->sources['list'][4]->departed_at = '2025-01-24 20:04:01';
+        $this->assertSame(
+            [
+                3 => $this->sources['list'][3],
+                4 => $this->sources['list'][4],
+            ],
+            $this->list
+                ->where('origin', '=', 'GRU')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                0 => $this->sources['list'][0],
+                1 => $this->sources['list'][1],
+                2 => $this->sources['list'][2],
+            ],
+            $this->list
+                ->where('origin', '!=', 'GRU')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                2 => $this->sources['list'][2],
+            ],
+            $this->list
+                ->where('departed_at', '>', '2025-01-21 16:41:59')
+                ->where('departed_at', '<', '2025-01-22 17:18:19')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                1 => $this->sources['list'][1],
+                2 => $this->sources['list'][2],
+                3 => $this->sources['list'][3],
+            ],
+            $this->list
+                ->where('departed_at', '>=', '2025-01-21 16:41:59')
+                ->where('departed_at', '<=', '2025-01-22 17:18:19')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                1 => $this->sources['list'][1],
+                4 => $this->sources['list'][4],
+            ],
+            $this->list
+                ->where('call_sign', '^=', 'TAM')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                0 => $this->sources['list'][0],
+                3 => $this->sources['list'][3],
+                4 => $this->sources['list'][4],
+            ],
+            $this->list
+                ->where('call_sign', '$=', '2')
+                ->all(),
+        );
+        $this->assertSame(
+            [
+                1 => $this->sources['list'][1],
+                2 => $this->sources['list'][2],
+            ],
+            $this->list
+                ->where('call_sign', '*=', '7')
+                ->all(),
+        );
+    }
+
+    /**
      * Test if can capture all values in the specified list "column".
      */
     public function testGetsColumns(): void

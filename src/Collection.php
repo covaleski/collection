@@ -477,6 +477,31 @@ class Collection implements ArrayAccess, Countable, Iterator
     }
 
     /**
+     * Create a collection with values that pass the specified column filter.
+     */
+    public function where(string $key, string $operator, mixed $value): static
+    {
+        $callback = match ($operator) {
+            '=' => fn ($v) => $v === $value,
+            '!=' => fn ($v) => $v !== $value,
+            '>' => fn ($v) => $v > $value,
+            '>=' => fn ($v) => $v >= $value,
+            '<' => fn ($v) => $v < $value,
+            '<=' => fn ($v) => $v <= $value,
+            '^=' => fn ($v) => str_starts_with(strval($v), strval($value)),
+            '$=' => fn ($v) => str_ends_with(strval($v), strval($value)),
+            '*=' => fn ($v) => str_contains(strval($v), strval($value)),
+        };
+        return $this->filter(function ($item) use ($key, $callback) {
+            $subject = match (true) {
+                is_array($item) => $item[$key],
+                is_object($item) => $item->$key,
+            };
+            return call_user_func($callback, $subject);
+        });
+    }
+
+    /**
      * Copy current data.
      */
     protected function clone(): array|object
