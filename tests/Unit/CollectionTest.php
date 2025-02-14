@@ -6,6 +6,7 @@ namespace Tests\Unit\Collection;
 
 use Covaleski\Collection\Collection;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Collection::class)]
@@ -32,6 +33,31 @@ final class CollectionTest extends TestCase
      * @var array<string, array|object>
      */
     protected array $sources;
+
+    /**
+     * Provide arguments to get collection columns.
+     */
+    public static function provideColumnArguments(): array
+    {
+        return [
+            [
+                'call_sign',
+                null,
+                ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
+            ],
+            [
+                'origin',
+                'call_sign',
+                [
+                    'FBZ5902' => 'AEP',
+                    'TAM3476' => 'CWB',
+                    'AZU8725' => 'MVD',
+                    'ARG1152' => 'GRU',
+                    'TAM3322' => 'GRU',
+                ],
+            ],
+        ];
+    }
 
     /**
      * Test if can access all the collection values.
@@ -323,11 +349,15 @@ final class CollectionTest extends TestCase
     /**
      * Test if can capture all values in the specified list "column".
      */
-    public function testGetsColumns(): void
-    {
+    #[DataProvider('provideColumnArguments')]
+    public function testGetsColumns(
+        null|int|string $column_key,
+        null|int|string $index_key,
+        array $expected,
+    ): void {
         $this->assertEquals(
-            ['FBZ5902', 'TAM3476', 'AZU8725', 'ARG1152', 'TAM3322'],
-            $this->list->column('call_sign')->all(),
+            $expected,
+            $this->list->column($column_key, $index_key)->all(),
         );
     }
 

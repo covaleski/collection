@@ -51,12 +51,23 @@ class Collection implements ArrayAccess, Countable, Iterator
     /**
      * Create a collection with values from each element at the specified key.
      */
-    public function column(string $key): static
-    {
-        return $this->map(fn (mixed $item): mixed => match (true) {
-            is_array($item) => $item[$key],
-            is_object($item) => $item->$key,
-        });
+    public function column(
+        null|int|string $value_key = null,
+        null|int|string $index_key = null,
+    ): static {
+        $result = [];
+        foreach ($this->values as $i => $item) {
+            $index = $index_key === null ? count($result) : match (true) {
+                is_array($item) => $item[$index_key],
+                is_object($item) => $item->$index_key,
+            };
+            $value = $value_key === null ? $item : match (true) {
+                is_array($item) => $item[$value_key],
+                is_object($item) => $item->$value_key,
+            };
+            $result[$index] = $value;
+        }
+        return new static($result);
     }
 
     /**
