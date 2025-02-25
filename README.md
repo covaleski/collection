@@ -16,6 +16,7 @@ Type agnostic wrapper to manipulate objects and arrays.
 - [X] `drop($column)`
 - [ ] `every($callback)`
 - [X] `filter($callback)`
+- [X] `find($callback)`
 - [X] `first()`
 - [X] `get()`
 - [X] `isset($key)`
@@ -28,11 +29,13 @@ Type agnostic wrapper to manipulate objects and arrays.
 - [X] `push($value)`
 - [ ] `reduce($callback)`
 - [ ] `reverse()`
+- [X] `search($value)`
 - [X] `set($key, $value)`
 - [X] `shift()`
 - [X] `slice($offset, $length)`
 - [ ] `some($callback)`
 - [X] `sort($callback)`
+- [X] `unique()`
 - [X] `unset($key)`
 - [X] `unshift($value)`
 - [X] `values()`

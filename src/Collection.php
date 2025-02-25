@@ -134,11 +134,24 @@ class Collection implements ArrayAccess, Countable, Iterator
     }
 
     /**
+     * Return the first value that passes the specified callback.
+     */
+    public function find(callable $callback, mixed $default = null): mixed
+    {
+        foreach ($this->values as $value) {
+            if ($callback($value)) {
+                return $value;
+            }
+        }
+        return $default;
+    }
+
+    /**
      * Get the first stored value.
      */
     public function first(mixed $default = null): mixed
     {
-        return $this->nth(0);
+        return $this->nth(0, $default);
     }
 
     /**
@@ -319,6 +332,19 @@ class Collection implements ArrayAccess, Countable, Iterator
     }
 
     /**
+     * Return the first that matches the specified value.
+     */
+    public function search(mixed $value, bool $strict = false): null|int|string
+    {
+        foreach ($this->values as $key => $candidate) {
+            if ($strict ? $candidate === $value : $candidate == $value) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Set the value at the specified key.
      */
     public function set(int|string $key, mixed $value): static
@@ -416,6 +442,16 @@ class Collection implements ArrayAccess, Countable, Iterator
     public function toObject(): object
     {
         return (object) $this->values;
+    }
+
+    /**
+     * Return only values that 
+     */
+    public function unique(bool $strict = false): static
+    {
+        return $this->filter(function ($value, $key) use ($strict) {
+            return $this->search($value, $strict) === $key;
+        });
     }
 
     /**

@@ -8,6 +8,7 @@ use Covaleski\Collection\Collection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 #[CoversClass(Collection::class)]
 final class CollectionTest extends TestCase
@@ -472,6 +473,97 @@ final class CollectionTest extends TestCase
         ));
         $this->assertSame(4, $count_a);
         $this->assertSame(5, $count_b);
+    }
+
+    /**
+     * Test if can search keys from values.
+     */
+    public function testManipulatesRepetitiveValues(): void
+    {
+        $from_assoc = new Collection([
+            'first' => 'orange',
+            'second' => 'apple',
+            'third' => 'strawberry',
+            'fourth' => 'apple',
+        ]);
+        $from_list = new Collection(['cyan', 'yellow', 'yellow', 'green']);
+        $from_object = new Collection((function () {
+            $object = new stdClass;
+            $object->first = 'John';
+            $object->second = 'Mary';
+            $object->third = 'John';
+            $object->fourth = 'Harry';
+            return $object;
+        })());
+        $this->assertSame('first', $from_assoc->search('orange'));
+        $this->assertSame('second', $from_assoc->search('apple'));
+        $this->assertSame('third', $from_assoc->search('strawberry'));
+        $this->assertNull($from_assoc->search('blueberry'));
+        $this->assertSame(0, $from_list->search('cyan'));
+        $this->assertSame(1, $from_list->search('yellow'));
+        $this->assertSame(3, $from_list->search('green'));
+        $this->assertNull($from_list->search('blue'));
+        $this->assertSame('first', $from_object->search('John'));
+        $this->assertSame('second', $from_object->search('Mary'));
+        $this->assertSame('fourth', $from_object->search('Harry'));
+        $this->assertNull($from_object->search('Paul'));
+        $this->assertSame(
+            'apple',
+            $from_assoc->find(fn ($v) => str_starts_with($v, 'app')),
+        );
+        $this->assertSame(
+            'orange',
+            $from_assoc->find(fn ($v) => str_ends_with($v, 'e')),
+        );
+        $this->assertNull(
+            $from_assoc->find(fn ($v) => str_contains($v, 'z')),
+        );
+        $this->assertSame(
+            'green',
+            $from_list->find(fn ($v) => str_contains($v, 'ee')),
+        );
+        $this->assertSame(
+            'yellow',
+            $from_list->find(fn ($v) => str_contains($v, 'e')),
+        );
+        $this->assertNull(
+            $from_list->find(fn ($v) => str_contains($v, 'z')),
+        );
+        $this->assertSame(
+            'Mary',
+            $from_object->find(fn ($v) => str_ends_with($v, 'ry')),
+        );
+        $this->assertSame(
+            'John',
+            $from_object->find(fn ($v) => str_contains($v, 'h')),
+        );
+        $this->assertNull(
+            $from_object->find(fn ($v) => str_contains($v, 'z')),
+        );
+        $this->assertSame(
+            [
+                'first' => 'orange',
+                'second' => 'apple',
+                'third' => 'strawberry',
+            ],
+            $from_assoc->unique()->all(),
+        );
+        $this->assertSame(
+            [
+                0 => 'cyan',
+                1 => 'yellow',
+                3 => 'green',
+            ],
+            $from_list->unique()->all(),
+        );
+        $this->assertEquals(
+            (object) [
+                'first' => 'John',
+                'second' => 'Mary',
+                'fourth' => 'Harry',
+            ],
+            $from_object->unique()->all(),
+        );
     }
 
     /**
